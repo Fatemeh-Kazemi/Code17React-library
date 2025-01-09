@@ -15,7 +15,7 @@ createRoot(document.getElementById("root")).render(
         <Route path="/" element={<Navbar />}>
           <Route path="/about" element={<About />} />
           <Route path="/books" element={<Books />}>
-          <Route path=":bookId" element={<Book />} />
+            <Route path=":bookId" element={<Book />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Route>

@@ -1,22 +1,45 @@
-import { NavLink, Outlet } from "react-router-dom";
+import { NavLink, Outlet, useSearchParams, useLocation } from "react-router-dom";
 import { getBooks } from "./data/data";
 
 const Books = () => {
-  let books = getBooks();
+  let bookList = getBooks();
+  let [searchParams, setSearchParams] = useSearchParams();
+  let location = useLocation();
 
   return (
-    <div style={{ display: "flex", flexDirection: "column" }}>
-      {books.map((book) => (
-        <NavLink
-          to={book.id}
-          key={book.id}
-          style={({ isActive }) => {
-            return { color: isActive ? "red" : "" };
+    <div style={{ display: "grid", gridTemplateColumns: "1fr 3fr" }}>
+      <div style={{ display: "flex", flexDirection: "column" }}>
+        <input
+          type="text"
+          value={searchParams.get("x") || ""}
+          onChange={(event) => {
+            let inputValue = event.target.value;
+            if (inputValue) {
+              setSearchParams({ x: inputValue });
+            } else {
+              setSearchParams({});
+            }
           }}
-        >
-          {book.name}
-        </NavLink>
-      ))}
+        />
+        {bookList
+          .filter((bookFiltered) => {
+            let filter = searchParams.get("x");
+            if (!filter) return true;
+            let name = bookFiltered.name.toLowerCase();
+            return name.startsWith(filter.toLowerCase());
+          })
+          .map((book) => (
+            <NavLink
+              to={`${book.id}${location.search}`}
+              key={book.id}
+              style={({ isActive }) => {
+                return { color: isActive ? "red" : "" };
+              }}
+            >
+              {book.name}
+            </NavLink>
+          ))}
+      </div>
 
       <Outlet />
     </div>
